@@ -37,3 +37,41 @@ document.getElementById('create-form').addEventListener("submit", (e) => {
         console.log('Iltimos qaytdan urinib ko\'ring!');
     })
 }) 
+
+
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('delete-me')) {
+        if (confirm("aniq o'chirmoqchimisiz?")) {
+            axios.post('/delete-item', {id: e.target.getAttribute("data-id")}).then(response => {
+                e.target.parentElement.parentElement.remove();
+            }).catch(err => {
+                console.log(err)
+            })
+        }
+    }
+
+    if (e.target.classList.contains('edit-me')) {
+        
+        let userInput = prompt("o'zgartirishni kiriting", e.target.parentElement.parentElement.querySelector('.item-text').innerHTML);
+
+        if (userInput) {
+            axios.post('/edit-item', {id: e.target.getAttribute("data-id"), new_reja: userInput}).then(response => {
+                e.target.parentElement.parentElement.querySelector('.item-text').innerHTML = userInput;
+            }).catch(err => {
+                console.log(err);
+            })
+        }
+
+    }
+})
+
+document.getElementById('clean-all').addEventListener('click', (e) => {
+    if (confirm("Hammasini o'chirmoqchimisiz?")) {
+        axios.post('/delete-all', {delete_all: true}).then(response => {
+            const item_list = document.getElementById('item-list');
+            item_list.removeChild(document.getElementById('item-all-lists'))
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+})
